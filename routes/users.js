@@ -1,12 +1,12 @@
 const express = require('express');
 const User = require('../models/user');
 
-const router = express.Router();
+const usersRouter = express.Router();
 const authenticate = require('../authenticate');
 const passport = require('passport');
 
 /* GET users listing. */
-router.get(
+usersRouter.get(
   '/',
   authenticate.verifyUser,
   authenticate.verifyAdmin,
@@ -18,7 +18,7 @@ router.get(
     }).catch((err) => next(err))
   })
 
-router.post('/signup', (req, res) => {
+usersRouter.post('/signup', (req, res) => {
   User.register(
     new User({ username: req.body.username }),
     req.body.password,
@@ -52,7 +52,7 @@ router.post('/signup', (req, res) => {
   );
 });
 
-router.post('/login', passport.authenticate('local'), (req, res) => {
+usersRouter.post('/login', passport.authenticate('local'), (req, res) => {
   const token = authenticate.getToken({ _id: req.user._id });
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
@@ -60,7 +60,7 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
 });
 
 
-router.get('/logout', (req, res, next) => {
+usersRouter.get('/logout', (req, res, next) => {
   if (req.session) {
     req.session.destroy();
     res.clearCookie('session-id');
@@ -73,4 +73,4 @@ router.get('/logout', (req, res, next) => {
 });
 
 
-module.exports = router;
+module.exports = usersRouter;
