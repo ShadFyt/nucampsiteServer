@@ -9,7 +9,7 @@ const favoriteRouter = express.Router();
 favoriteRouter.route('/')
     .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
     .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
-        Favorite.find({ user: req.user._id }).populate('user.firstname').populate('campsites.name')
+        Favorite.find({ user: req.user._id }).populate('user').populate('campsites')
             .then((favorites) => {
                 console.log("finding user", req.user)
                 console.log("favorites: ", favorites)
@@ -91,6 +91,7 @@ favoriteRouter.route('/:campsiteId')
                             res.json(favorite)
                         }).catch(err => next(err));
                     } else {
+                        res.setHeader("Content-Type", "application/json");
                         res.end("That campsite is already in the list of favorites!")
                     }
                 } else {
